@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+echo "MIHOME START SCRIPT v4"
+
 cd /app
 
 if [ ! -f package.json ]; then
@@ -9,16 +11,14 @@ if [ ! -f package.json ]; then
 fi
 
 mkdir -p data
+mkdir -p node_modules
 
-echo "Cleaning old install..."
-rm -rf node_modules dist
-
-echo "Installing dependencies..."
-npm install --include=dev --include=optional
-
-echo "Checking vite..."
-ls -la node_modules/.bin || true
-test -f node_modules/.bin/vite || { echo "vite still missing after install"; exit 1; }
+if [ ! -f node_modules/.install-complete ]; then
+  echo "Installing dependencies..."
+  rm -rf dist
+  npm install --include=dev --include=optional
+  touch node_modules/.install-complete
+fi
 
 echo "Building app..."
 npm run build
