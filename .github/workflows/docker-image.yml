@@ -22,6 +22,24 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Resolve image name
+        id: image
+        shell: bash
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_PROJECT_NAME: ${{ secrets.DOCKERHUB_PROJECT_NAME }}
+          DEFAULT_REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          if [[ -z "$DOCKER_USERNAME" ]]; then
+            echo "DOCKER_USERNAME secret is required."
+            exit 1
+          fi
+
+          repo_name="${DOCKERHUB_PROJECT_NAME:-$DEFAULT_REPO_NAME}"
+          repo_name="${repo_name,,}"
+
+          echo "name=${DOCKER_USERNAME}/${repo_name}" >> "$GITHUB_OUTPUT"
+
       - name: Extract metadata
         id: meta
         shell: bash
@@ -35,7 +53,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:latest
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_PROJECT_NAME }}:${{ steps.meta.outputs.SHORT_SHA }}
+            ${{ steps.image.outputs.name }}:latest
+            ${{ steps.image.outputs.name }}:${{ steps.meta.outputs.SHORT_SHA }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
