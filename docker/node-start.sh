@@ -10,8 +10,10 @@ fi
 
 mkdir -p data
 
-echo "Installing dependencies..."
-rm -rf node_modules
+echo "Cleaning old install..."
+rm -rf node_modules dist
+
+echo "Installing dependencies with dev packages..."
 npm ci --include=dev --include=optional
 
 echo "Building app..."
