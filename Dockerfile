@@ -1,6 +1,5 @@
 FROM node:22-bookworm-slim
 
-ENV NODE_ENV=production
 ENV PORT=80
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
