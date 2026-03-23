@@ -8,19 +8,17 @@ if [ ! -f package.json ]; then
   exit 1
 fi
 
-if [ ! -d data ]; then
-  mkdir -p data
-fi
+mkdir -p data
 
 if [ ! -d node_modules ]; then
   echo "Installing dependencies..."
-  npm ci
+  npm ci --include=dev
 fi
 
-if [ ! -d dist ]; then
-  echo "Building app..."
-  npm run build
-fi
+echo "Building app..."
+npm run build
+
+export PORT="${PORT:-80}"
 
 echo "Starting app on port ${PORT}..."
 exec npm run start
