@@ -10,10 +10,9 @@ fi
 
 mkdir -p data
 
-if [ ! -d node_modules ]; then
-  echo "Installing dependencies..."
-  npm ci --include=dev
-fi
+echo "Installing dependencies..."
+rm -rf node_modules
+npm ci --include=dev --include=optional
 
 echo "Building app..."
 npm run build
